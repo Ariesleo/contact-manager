@@ -38,6 +38,16 @@ const userSchema = new mongoose.Schema({
   ],
 })
 
+// hiding the tokens and the password field
+userSchema.methods.toJSON = function () {
+  const user = this
+  const userObject = user.toObject()
+
+  delete userObject.password
+  delete userObject.tokens
+  return userObject
+}
+
 // generate and return a token
 userSchema.methods.generateAuthToken = async function () {
   const user = this
