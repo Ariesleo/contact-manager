@@ -23,4 +23,32 @@ router.get('/contacts', async (req, res) => {
   }
 })
 
+// updating a contact
+router.put('/contacts/:id', async (req, res) => {
+  const id = req.params.id
+  const updates = Object.keys(req.body)
+  const allowedUpdates = ['name', 'phoneNumber', 'address', 'email']
+  const isValidOperation = updates.every((update) =>
+    allowedUpdates.includes(update)
+  )
+
+  if (!isValidOperation) {
+    res.send('Operation is not valid')
+  }
+
+  try {
+    const contact = await Contacts.findById(id)
+    updates.forEach((update) => {
+      contact[update] = req.body[update]
+    })
+    await contact.save()
+    if (!contact) {
+      res.send(`user with the id ${id} does not exist`)
+    }
+    res.status(201).send(contact)
+  } catch (error) {
+    res.status(500).send(e)
+  }
+})
+
 module.exports = router
