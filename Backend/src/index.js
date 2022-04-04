@@ -1,9 +1,12 @@
 const express = require('express')
 
+// run mongoose
+require('./db/mongoose')
+
 const app = express()
 const port = process.env.PORT || 3000
 
-app.get('/', (req, res) => {
+app.get('/users', (req, res) => {
   res.send('welcome to the home page')
 })
 
