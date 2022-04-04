@@ -51,4 +51,16 @@ router.put('/contacts/:id', async (req, res) => {
   }
 })
 
+// deleting a contact
+router.delete('/contacts/:id', async (req, res) => {
+  const id = req.params.id
+  const contact = await Contacts.findById(id)
+  try {
+    await contact.remove()
+    res.send(contact)
+  } catch (e) {
+    res.send(e)
+  }
+})
+
 module.exports = router
