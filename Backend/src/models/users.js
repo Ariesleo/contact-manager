@@ -35,15 +35,14 @@ userSchema.statics.findByCredentials = async (email, password) => {
     if (!user) {
       throw new Error('unable to login')
     }
-    // const isMatch = await bcrypt.compare(password, user.password)
-    // if (!isMatch) {
-    //   throw new Error('Unable to login')
-    // }
+    const isMatch = await bcrypt.compare(password, user.password)
+    if (!isMatch) {
+      throw new Error('Unable to login')
+    }
+    return user
   } catch (e) {
     console.log(e)
   }
-
-  return user
 }
 
 // setting up the middleware to hash the password
