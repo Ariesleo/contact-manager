@@ -46,6 +46,15 @@ userSchema.statics.findByCredentials = async (email, password) => {
   return user
 }
 
+// setting up the middleware to hash the password
+userSchema.pre('save', async function (next) {
+  const user = this
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8)
+  }
+  next()
+})
+
 const User = mongoose.model('User', userSchema)
 
 module.exports = User
