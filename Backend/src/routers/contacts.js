@@ -2,6 +2,7 @@ const express = require('express')
 const router = new express.Router()
 const Contacts = require('../models/contacts')
 const auth = require('../middleware/auth')
+const multer = require('multer')
 
 // creating the POST/contacts endpoint
 router.post('/contacts', async (req, res) => {
@@ -62,6 +63,15 @@ router.delete('/contacts/:id', async (req, res) => {
   } catch (e) {
     res.send(e)
   }
+})
+
+// setup endpoint for the image upload
+const upload = multer({
+  dest: 'images',
+})
+
+router.post('/contacts/upload', upload.single('avatar'), (req, res) => {
+  res.send('file upload')
 })
 
 module.exports = router
