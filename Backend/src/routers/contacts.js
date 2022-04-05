@@ -5,9 +5,10 @@ const auth = require('../middleware/auth')
 const multer = require('multer')
 
 // creating the POST/contacts endpoint
-router.post('/contacts', async (req, res) => {
+router.post('/contacts', auth, async (req, res) => {
   const contact = new Contacts(req.body)
   try {
+    contact.email = req.user.email
     await contact.save()
     res.status(201).send(contact)
   } catch (e) {
@@ -26,20 +27,19 @@ router.get('/contacts', auth, async (req, res) => {
 })
 
 // updating a contact
-router.put('/contacts/:id', async (req, res) => {
-  const id = req.params.id
+router.put('/contacts/me', auth, async (req, res) => {
   const updates = Object.keys(req.body)
-  const allowedUpdates = ['name', 'phoneNumber', 'address', 'email']
+  const allowedUpdates = ['name', 'phoneNumber', 'address']
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   )
 
   if (!isValidOperation) {
-    res.send('Operation is not valid')
+    res.send('You cannot update email and other unknown fields')
   }
 
   try {
-    const contact = await Contacts.findById(id)
+    const contact = await Contacts.findOne({ email: req.user.email })
     updates.forEach((update) => {
       contact[update] = req.body[update]
     })
@@ -54,7 +54,7 @@ router.put('/contacts/:id', async (req, res) => {
 })
 
 // deleting a contact
-router.delete('/contacts/:id', async (req, res) => {
+router.delete('/contacts/:id', auth, async (req, res) => {
   const id = req.params.id
   const contact = await Contacts.findById(id)
   try {
@@ -81,8 +81,8 @@ const upload = multer({
   // },
 })
 
-router.post('/contacts/upload', upload.single('upload'), (req, res) => {
-  // console.log('fusldjk', req.contacts.avatar)
+router.post('/contacts/upload', auth, upload.single('upload'), (req, res) => {
+  console.log('user', req.user.email)
   res.send('file upload')
 })
 
