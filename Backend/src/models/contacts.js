@@ -22,6 +22,7 @@ const Contacts = mongoose.model('contacts', {
   },
   image: {
     type: Buffer,
+    default: '',
   },
   email: {
     type: String,

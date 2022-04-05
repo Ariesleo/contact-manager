@@ -54,9 +54,9 @@ router.put('/contacts/me', auth, async (req, res) => {
 })
 
 // deleting a contact
-router.delete('/contacts/:id', auth, async (req, res) => {
-  const id = req.params.id
-  const contact = await Contacts.findById(id)
+router.delete('/contacts/me', auth, async (req, res) => {
+  // const id = req.params.id
+  const contact = await Contacts.findOne({ email: req.user.email })
   try {
     await contact.remove()
     res.send(contact)
@@ -67,23 +67,33 @@ router.delete('/contacts/:id', auth, async (req, res) => {
 
 // setup endpoint for the image upload
 const upload = multer({
-  dest: 'images',
+  // dest: 'images',
   // validating file size 1mb
   limits: {
     fileSize: 1000000,
   },
   // filter the extension we want to upload
-  // fileFilter(req, file, cb) {
-  //   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-  //     return cb(new Error('please upload an image'))
-  //   }
-  //   cb(undefined, true)
-  // },
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+      return cb(new Error('please upload an image'))
+    }
+    cb(undefined, true)
+  },
 })
 
-router.post('/contacts/upload', auth, upload.single('upload'), (req, res) => {
-  console.log('user', req.user.email)
-  res.send('file upload')
-})
+router.post(
+  '/contacts/upload',
+  auth,
+  upload.single('upload'),
+  async (req, res) => {
+    // console.log(req.user.email)
+    const contact = await Contacts.findOne({ email: req.user.email })
+    contact.image = await req.file.buffer
+    // console.log(contact)
+    await contact.save()
+    // console.log(contact.image)
+    res.send('file upload')
+  }
+)
 
 module.exports = router
