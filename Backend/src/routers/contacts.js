@@ -68,9 +68,21 @@ router.delete('/contacts/:id', async (req, res) => {
 // setup endpoint for the image upload
 const upload = multer({
   dest: 'images',
+  // validating file size 1mb
+  limits: {
+    fileSize: 1000000,
+  },
+  // filter the extension we want to upload
+  // fileFilter(req, file, cb) {
+  //   if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+  //     return cb(new Error('please upload an image'))
+  //   }
+  //   cb(undefined, true)
+  // },
 })
 
-router.post('/contacts/upload', upload.single('avatar'), (req, res) => {
+router.post('/contacts/upload', upload.single('upload'), (req, res) => {
+  // console.log('fusldjk', req.contacts.avatar)
   res.send('file upload')
 })
 

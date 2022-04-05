@@ -20,6 +20,9 @@ const Contacts = mongoose.model('contacts', {
   address: {
     type: String,
   },
+  image: {
+    type: Buffer,
+  },
   email: {
     type: String,
     unique: true,
