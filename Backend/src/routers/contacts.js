@@ -86,14 +86,26 @@ router.post(
   auth,
   upload.single('upload'),
   async (req, res) => {
-    // console.log(req.user.email)
     const contact = await Contacts.findOne({ email: req.user.email })
     contact.image = await req.file.buffer
-    // console.log(contact)
-    await contact.save()
     // console.log(contact.image)
+    await contact.save()
     res.send('file upload')
   }
 )
+
+// get image by setting the endpoint
+router.get('/contacts/:id/image', async (req, res) => {
+  try {
+    const contact = await Contacts.findById(req.params.id)
+    if (!contact || !contact.image) {
+      throw new Error()
+    }
+    res.set('Content-Type', 'image/jpg')
+    res.send(contact.image)
+  } catch (e) {
+    res.status(404).send()
+  }
+})
 
 module.exports = router
