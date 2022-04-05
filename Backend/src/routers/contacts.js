@@ -3,6 +3,7 @@ const router = new express.Router()
 const Contacts = require('../models/contacts')
 const auth = require('../middleware/auth')
 const multer = require('multer')
+const sharp = require('sharp')
 
 // creating the POST/contacts endpoint
 router.post('/contacts', auth, async (req, res) => {
@@ -86,9 +87,14 @@ router.post(
   auth,
   upload.single('upload'),
   async (req, res) => {
+    // resizing and converting to the png format
+    const buffer = await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toBuffer()
+
     const contact = await Contacts.findOne({ email: req.user.email })
-    contact.image = await req.file.buffer
-    // console.log(contact.image)
+    contact.image = buffer
     await contact.save()
     res.send('file upload')
   }
@@ -101,7 +107,7 @@ router.get('/contacts/:id/image', async (req, res) => {
     if (!contact || !contact.image) {
       throw new Error()
     }
-    res.set('Content-Type', 'image/jpg')
+    res.set('Content-Type', 'image/png')
     res.send(contact.image)
   } catch (e) {
     res.status(404).send()
