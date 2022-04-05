@@ -1,6 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 const Contacts = require('../models/contacts')
+const auth = require('../middleware/auth')
 
 // creating the POST/contacts endpoint
 router.post('/contacts', async (req, res) => {
@@ -14,7 +15,7 @@ router.post('/contacts', async (req, res) => {
 })
 
 // creating GET/contacts endpoint to fetch all contacts
-router.get('/contacts', async (req, res) => {
+router.get('/contacts', auth, async (req, res) => {
   try {
     const contacts = await Contacts.find({})
     res.send(contacts)
