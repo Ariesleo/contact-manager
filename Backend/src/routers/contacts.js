@@ -47,7 +47,7 @@ router.put('/contacts/:id', async (req, res) => {
       res.send(`user with the id ${id} does not exist`)
     }
     res.status(201).send(contact)
-  } catch (error) {
+  } catch (e) {
     res.status(500).send(e)
   }
 })
