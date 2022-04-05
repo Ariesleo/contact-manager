@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 
-const Contacts = mongoose.model('contacts', {
+const contactSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -37,5 +37,14 @@ const Contacts = mongoose.model('contacts', {
     },
   },
 })
+contactSchema.methods.toJSON = function () {
+  const contact = this
+  const contactObject = contact.toObject()
+
+  delete contactObject.image
+  return contactObject
+}
+
+const Contacts = mongoose.model('contacts', contactSchema)
 
 module.exports = Contacts
