@@ -18,7 +18,7 @@ router.post('/contacts', auth, async (req, res) => {
 })
 
 // creating GET/contacts endpoint to fetch all contacts
-router.get('/contacts', async (req, res) => {
+router.get('/contacts', auth, async (req, res) => {
   try {
     const contacts = await Contacts.find({})
     res.send(contacts)
