@@ -14,7 +14,6 @@ export const SignUp = () => {
             password
         }
         axios.post(`http://localhost:8000/signup`, user).then(res => {
-            console.log(res)
             alert(`user with the email: ${email} has been created`)
         }).catch((e) => {
             if (e.response.status === 400) {
@@ -41,7 +40,7 @@ export const SignUp = () => {
             </div>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <button type="submit" class="btn btn-primary">Submit</button> 
-                <span>Don't have account? <Link to="/signin">SignIn</Link></span>
+                <span>Already have account? <Link to="/signin">SignIn</Link></span>
             </div>
             </form>
     </div>)
