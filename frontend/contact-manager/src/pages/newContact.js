@@ -6,9 +6,12 @@ import { getToken } from '../utils/getToken'
 export const NewContact = () => {
   const navigate = useNavigate()
 
-  const [name, setName] = useState()
-  const [phone, setPhone] = useState()
-  const [address, setAddress] = useState()
+  const [name, setName] = useState('')
+  const [work, setWork] = useState('')
+  const [home, setHome] = useState('')
+  const [mobile, setMobile] = useState('')
+  const [address, setAddress] = useState('')
+  const [email, setEmail] = useState('')
 
   const headerData = getToken()
 
@@ -16,13 +19,19 @@ export const NewContact = () => {
     if (!headerData.Authorization) {
       navigate('/')
     }
-  }, [])
+  })
 
-  const addContact = async () => {
+  const addContact = async (e) => {
+    e.preventDefault()
     const contact = {
       name,
-      phoneNumber: phone,
+      phone: {
+        work,
+        home,
+        mobile,
+      },
       address,
+      email,
     }
     try {
       await axios.post(`http://localhost:8000/contacts`, contact, {
@@ -40,7 +49,7 @@ export const NewContact = () => {
         <h1 class="nav justify-content-center">Add New Contact</h1>
         <div class="mb-3">
           <label for="name" class="form-label">
-            Name
+            Name*
           </label>
           <input
             type="text"
@@ -54,18 +63,47 @@ export const NewContact = () => {
           />
         </div>
         <div class="mb-3">
-          <label for="phone" class="form-label">
-            Phone Number
-          </label>
-          <input
-            type="text"
-            class="form-control"
-            id="phone"
-            value={phone}
-            onChange={(e) => {
-              setPhone(e.target.value)
-            }}
-          />
+          <label class="form-label">Phone Number</label>
+          <div class="mb-3" style={{ width: '60%', marginLeft: '10%' }}>
+            <label for="work" class="for-label">
+              Work
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="work"
+              value={work}
+              onChange={(e) => {
+                setWork(e.target.value)
+              }}
+            />
+            {/* HOME */}
+            <label for="home" class="for-label">
+              Home
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="home"
+              value={home}
+              onChange={(e) => {
+                setHome(e.target.value)
+              }}
+            />
+            {/* Mobile */}
+            <label for="mobile" class="for-label">
+              Mobile*
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              id="mobile"
+              value={mobile}
+              onChange={(e) => {
+                setMobile(e.target.value)
+              }}
+            />
+          </div>
         </div>
         <div class="mb-3">
           <label for="address" class="form-label">
@@ -78,6 +116,20 @@ export const NewContact = () => {
             value={address}
             onChange={(e) => {
               setAddress(e.target.value)
+            }}
+          />
+        </div>
+        <div class="mb-3">
+          <label for="email" class="form-label">
+            Email*
+          </label>
+          <input
+            type="text"
+            class="form-control"
+            id="address"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value)
             }}
           />
         </div>

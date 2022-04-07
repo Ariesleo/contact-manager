@@ -67,15 +67,14 @@ export const Home = () => {
               <th scope="col">Address</th>
               <th scope="col">Email</th>
               <th scope="col">Actions</th>
+              <th scope="col">Favourite</th>
             </tr>
           </thead>
           <tbody>
             {contact.map((data, key) => {
               return (
                 <tr key={key}>
-                  <th scope="row">
-                    <i>{data._id}</i>
-                  </th>
+                  <th scope="row">{key + 1}</th>
                   <td>{data.name}</td>
                   <td>
                     <b>Home:</b> {data.phone.home}
