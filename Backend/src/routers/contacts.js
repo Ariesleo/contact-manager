@@ -27,9 +27,10 @@ router.get('/contacts', auth, async (req, res) => {
 })
 
 // updating a contact
-router.put('/contacts/me', auth, async (req, res) => {
+router.put('/contacts/:id', auth, async (req, res) => {
+  const id = req.params.id
   const updates = Object.keys(req.body)
-  const allowedUpdates = ['name', 'phoneNumber', 'address']
+  const allowedUpdates = ['name', 'phone', 'address', 'email']
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   )
@@ -39,14 +40,14 @@ router.put('/contacts/me', auth, async (req, res) => {
   }
 
   try {
-    const contact = await Contacts.findOne({ email: req.user.email })
+    const contact = await Contacts.findById(id)
+    if (!contact) {
+      res.send(`user with the id ${id} does not exist`)
+    }
     updates.forEach((update) => {
       contact[update] = req.body[update]
     })
     await contact.save()
-    if (!contact) {
-      res.send(`user with the id ${id} does not exist`)
-    }
     res.status(201).send(contact)
   } catch (e) {
     res.status(500).send(e)
