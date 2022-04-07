@@ -6,11 +6,11 @@ const multer = require('multer')
 const sharp = require('sharp')
 
 // creating the POST/contacts endpoint
-router.post('/contacts', async (req, res) => {
+router.post('/contacts', auth, async (req, res) => {
   const contact = new Contacts(req.body)
   try {
     await contact.save()
-    res.status(201).send(contact)
+    res.status(201).send('contact saved sucessfully')
   } catch (e) {
     res.status(400).send(e)
   }

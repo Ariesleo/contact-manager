@@ -9,12 +9,12 @@ const contactSchema = new mongoose.Schema({
   phone: {
     work: {
       type: String,
-      default: '01-44550',
+      default: '',
       trim: true,
     },
     home: {
       type: String,
-      default: '02-44550',
+      default: '',
       trim: true,
     },
     mobile: {
@@ -31,6 +31,7 @@ const contactSchema = new mongoose.Schema({
   },
   address: {
     type: String,
+    default: '',
   },
   email: {
     type: String,
