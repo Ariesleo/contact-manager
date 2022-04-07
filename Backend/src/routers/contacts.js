@@ -55,12 +55,12 @@ router.put('/contacts/:id', auth, async (req, res) => {
 })
 
 // deleting a contact
-router.delete('/contacts/me', auth, async (req, res) => {
-  // const id = req.params.id
-  const contact = await Contacts.findOne({ email: req.user.email })
+router.delete('/contacts/:id', auth, async (req, res) => {
+  const id = req.params.id
+  const contact = await Contacts.findById(id)
   try {
     await contact.remove()
-    res.send(contact)
+    res.send('contact removed')
   } catch (e) {
     res.send(e)
   }
@@ -83,17 +83,18 @@ const upload = multer({
 })
 
 router.post(
-  '/contacts/upload',
+  '/contacts/:id/upload',
   auth,
   upload.single('upload'),
   async (req, res) => {
+    const { id } = req.params
     // resizing and converting to the png format
     const buffer = await sharp(req.file.buffer)
       .resize({ width: 250, height: 250 })
       .png()
       .toBuffer()
 
-    const contact = await Contacts.findOne({ email: req.user.email })
+    const contact = await Contacts.findById(id)
     contact.image = buffer
     await contact.save()
     res.send('file upload')
