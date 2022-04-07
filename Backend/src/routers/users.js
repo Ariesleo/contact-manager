@@ -7,7 +7,6 @@ router.post('/signup', async (req, res) => {
   const user = new User(req.body)
 
   try {
-    // const token = await user.generateAuthToken()
     await user.save()
     res.status(201).send({ user })
   } catch (e) {
@@ -19,6 +18,9 @@ router.post('/signup', async (req, res) => {
 router.post('/signin', async (req, res) => {
   try {
     const user = await User.findByCredentials(req.body.email, req.body.password)
+    if (!user) {
+      res.send('user not found')
+    }
     const token = await user.generateAuthToken()
     res.send({ user, token })
   } catch (e) {

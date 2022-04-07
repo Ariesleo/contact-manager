@@ -6,22 +6,31 @@ const contactSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  phoneNumber: {
-    type: String,
-    trim: true,
-    required: true,
-    unique: true,
-    validate(value) {
-      if (value.length < 10) {
-        throw new Error('Phone number must be of length 10')
-      }
+  phone: {
+    work: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    home: {
+      type: String,
+      default: '',
+      trim: true,
+    },
+    mobile: {
+      type: String,
+      trim: true,
+      required: true,
+      unique: true,
+      validate(value) {
+        if (value.length < 10) {
+          throw new Error('Mobile Number must be fo lenght 10')
+        }
+      },
     },
   },
   address: {
     type: String,
-  },
-  image: {
-    type: Buffer,
     default: '',
   },
   email: {
@@ -35,6 +44,10 @@ const contactSchema = new mongoose.Schema({
         throw new Error('email is not valid')
       }
     },
+  },
+  image: {
+    type: Buffer,
+    default: '',
   },
 })
 contactSchema.methods.toJSON = function () {

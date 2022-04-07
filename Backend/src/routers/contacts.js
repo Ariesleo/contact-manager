@@ -9,9 +9,8 @@ const sharp = require('sharp')
 router.post('/contacts', auth, async (req, res) => {
   const contact = new Contacts(req.body)
   try {
-    contact.email = req.user.email
     await contact.save()
-    res.status(201).send(contact)
+    res.status(201).send('contact saved sucessfully')
   } catch (e) {
     res.status(400).send(e)
   }
@@ -28,9 +27,10 @@ router.get('/contacts', auth, async (req, res) => {
 })
 
 // updating a contact
-router.put('/contacts/me', auth, async (req, res) => {
+router.put('/contacts/:id', auth, async (req, res) => {
+  const id = req.params.id
   const updates = Object.keys(req.body)
-  const allowedUpdates = ['name', 'phoneNumber', 'address']
+  const allowedUpdates = ['name', 'phone', 'address', 'email']
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   )
@@ -40,14 +40,14 @@ router.put('/contacts/me', auth, async (req, res) => {
   }
 
   try {
-    const contact = await Contacts.findOne({ email: req.user.email })
+    const contact = await Contacts.findById(id)
+    if (!contact) {
+      res.send(`user with the id ${id} does not exist`)
+    }
     updates.forEach((update) => {
       contact[update] = req.body[update]
     })
     await contact.save()
-    if (!contact) {
-      res.send(`user with the id ${id} does not exist`)
-    }
     res.status(201).send(contact)
   } catch (e) {
     res.status(500).send(e)
@@ -55,12 +55,12 @@ router.put('/contacts/me', auth, async (req, res) => {
 })
 
 // deleting a contact
-router.delete('/contacts/me', auth, async (req, res) => {
-  // const id = req.params.id
-  const contact = await Contacts.findOne({ email: req.user.email })
+router.delete('/contacts/:id', auth, async (req, res) => {
+  const id = req.params.id
+  const contact = await Contacts.findById(id)
   try {
     await contact.remove()
-    res.send(contact)
+    res.send('contact removed')
   } catch (e) {
     res.send(e)
   }
@@ -83,17 +83,18 @@ const upload = multer({
 })
 
 router.post(
-  '/contacts/upload',
+  '/contacts/:id/upload',
   auth,
   upload.single('upload'),
   async (req, res) => {
+    const { id } = req.params
     // resizing and converting to the png format
     const buffer = await sharp(req.file.buffer)
       .resize({ width: 250, height: 250 })
       .png()
       .toBuffer()
 
-    const contact = await Contacts.findOne({ email: req.user.email })
+    const contact = await Contacts.findById(id)
     contact.image = buffer
     await contact.save()
     res.send('file upload')
