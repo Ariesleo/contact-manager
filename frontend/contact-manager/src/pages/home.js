@@ -5,11 +5,11 @@ import { getToken } from '../utils/getToken'
 
 export const Home = () => {
   const navigate = useNavigate()
+  const headerData = getToken()
 
   const [contact, setContact] = useState([])
 
   const getData = async () => {
-    const headerData = getToken()
     try {
       const contactsData = await axios.get(`http://localhost:8000/contacts`, {
         headers: headerData,
@@ -30,12 +30,24 @@ export const Home = () => {
   const routeContact = () => {
     navigate('/newcontact')
   }
+
+  // deleting the contact
+  const deleteContact = async (id) => {
+    console.log(headerData)
+    console.log(id)
+    try {
+      await axios.delete(`http://localhost:8000/contacts/${id}`, {
+        headers: headerData,
+      })
+      alert('contct deleted')
+      document.location.reload(true)
+    } catch (e) {
+      console.log(e)
+    }
+  }
   return (
     <>
-      {/* {contact.map((elem, key) => {
-            return (<h4 key={key}>{elem.name}</h4>)
-        })} */}
-      <div class="container" style={{ width: '80%', marginTop: '1.5%' }}>
+      <div class="container" style={{ marginTop: '1.5%' }}>
         <button
           type="button"
           class="btn btn-outline-primary"
@@ -51,7 +63,7 @@ export const Home = () => {
             <tr>
               <th scope="col">ID</th>
               <th scope="col">Name</th>
-              <th scope="col">PhoneNumber</th>
+              <th scope="col">Phone</th>
               <th scope="col">Address</th>
               <th scope="col">Email</th>
               <th scope="col">Actions</th>
@@ -65,7 +77,13 @@ export const Home = () => {
                     <i>{data._id}</i>
                   </th>
                   <td>{data.name}</td>
-                  <td>{data.phoneNumber}</td>
+                  <td>
+                    <b>Home:</b> {data.phone.home}
+                    <br />
+                    <b>Work:</b> {data.phone.work}
+                    <br />
+                    <b>Mobile:</b> {data.phone.mobile}
+                  </td>
                   <td>{data.address}</td>
                   <td>{data.email}</td>
                   <td
@@ -74,7 +92,12 @@ export const Home = () => {
                     <button type="button" class="btn btn-primary">
                       edit
                     </button>{' '}
-                    <button button type="button" class="btn btn-danger">
+                    <button
+                      button
+                      type="button"
+                      class="btn btn-danger"
+                      onClick={() => deleteContact(data._id)}
+                    >
                       delelte
                     </button>
                   </td>
