@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/getToken'
+import { EditContact } from './edittContact'
 
 export const Home = () => {
   const navigate = useNavigate()
@@ -44,6 +45,18 @@ export const Home = () => {
     } catch (e) {
       console.log(e)
     }
+  }
+  // edit
+  const editContact = (id, name, phone, address, email) => {
+    navigate('/editcontact', {
+      state: {
+        id,
+        name,
+        phone,
+        address,
+        email,
+      },
+    })
   }
   return (
     <>
@@ -88,7 +101,19 @@ export const Home = () => {
                   <td
                     style={{ display: 'flex', justifyContent: 'space-between' }}
                   >
-                    <button type="button" class="btn btn-primary">
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      onClick={() =>
+                        editContact(
+                          data._id,
+                          data.name,
+                          data.phone,
+                          data.address,
+                          data.email
+                        )
+                      }
+                    >
                       edit
                     </button>{' '}
                     <button
