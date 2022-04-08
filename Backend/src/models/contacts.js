@@ -45,6 +45,10 @@ const contactSchema = new mongoose.Schema({
       }
     },
   },
+  favourite: {
+    type: Boolean,
+    default: false,
+  },
   image: {
     type: Buffer,
     default: '',

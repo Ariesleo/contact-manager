@@ -26,11 +26,23 @@ router.get('/contacts', auth, async (req, res) => {
   }
 })
 
+router.patch('/contacts/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    const singleContact = await Contacts.findById(id)
+    singleContact.favourite = !singleContact.favourite
+    singleContact.save()
+    res.send(singleContact)
+  } catch (e) {
+    res.send(e)
+  }
+})
+
 // updating a contact
 router.put('/contacts/:id', auth, async (req, res) => {
   const id = req.params.id
   const updates = Object.keys(req.body)
-  const allowedUpdates = ['name', 'phone', 'address', 'email']
+  const allowedUpdates = ['name', 'phone', 'address', 'email', 'favourite']
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   )
