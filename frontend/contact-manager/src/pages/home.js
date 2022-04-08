@@ -2,13 +2,22 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/getToken'
-import { EditContact } from './edittContact'
 
 export const Home = () => {
   const navigate = useNavigate()
   const headerData = getToken()
 
   const [contact, setContact] = useState([])
+
+  const updateFavourite = async (id) => {
+    console.log('change favourite', id)
+    try {
+      await axios.patch(`http://localhost:8000/contacts/${id}`)
+      document.location.reload()
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   const getData = async () => {
     try {
@@ -88,7 +97,10 @@ export const Home = () => {
               return (
                 <tr key={key}>
                   <th scope="row">{key + 1}</th>
-                  <td>{data.name}</td>
+                  <td>
+                    {data.name}
+                    {data.favourite}
+                  </td>
                   <td>
                     <b>Home:</b> {data.phone.home}
                     <br />
@@ -124,6 +136,18 @@ export const Home = () => {
                     >
                       delelte
                     </button>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <input
+                        type="checkbox"
+                        checked={data.favourite}
+                        onChange={(e) => {
+                          e.preventDefault()
+                          updateFavourite(data._id)
+                        }}
+                      />
+                    </div>
                   </td>
                 </tr>
               )
