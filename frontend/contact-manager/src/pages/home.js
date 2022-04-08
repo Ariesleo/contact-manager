@@ -9,6 +9,7 @@ export const Home = () => {
 
   const [contact, setContact] = useState([])
 
+  // updating the favourite data
   const updateFavourite = async (id) => {
     try {
       await axios.patch(`http://localhost:8000/contacts/${id}`)
@@ -18,6 +19,7 @@ export const Home = () => {
     }
   }
 
+  // fetching all contacts
   const getData = async () => {
     try {
       const contactsData = await axios.get(`http://localhost:8000/contacts`, {
@@ -36,10 +38,6 @@ export const Home = () => {
     getData()
   }, [])
 
-  const routeContact = () => {
-    navigate('/newcontact')
-  }
-
   // deleting the contact
   const deleteContact = async (id) => {
     try {
@@ -52,7 +50,7 @@ export const Home = () => {
       console.log(e)
     }
   }
-  // edit
+  // send the relevent data for editing
   const editContact = (id, name, phone, address, email) => {
     navigate('/editcontact', {
       state: {
@@ -71,7 +69,9 @@ export const Home = () => {
           type="button"
           class="btn btn-outline-primary"
           style={{ float: 'right' }}
-          onClick={routeContact}
+          onClick={() => {
+            navigate('/newcontact')
+          }}
         >
           Add New Contact
         </button>
@@ -81,6 +81,8 @@ export const Home = () => {
           <thead>
             <tr>
               <th scope="col">ID</th>
+
+              <th scope="col">Image</th>
               <th scope="col">Name</th>
               <th scope="col">Phone</th>
               <th scope="col">Address</th>
@@ -94,10 +96,15 @@ export const Home = () => {
               return (
                 <tr key={key}>
                   <th scope="row">{key + 1}</th>
+
                   <td>
-                    {data.name}
-                    {data.favourite}
+                    <img
+                      style={{ borderRadius: '50%', height: '70px' }}
+                      alt=""
+                      src={`http://localhost:8000/contacts/${data._id}/image`}
+                    />
                   </td>
+                  <td>{data.name}</td>
                   <td>
                     <b>Home:</b> {data.phone.home}
                     <br />
