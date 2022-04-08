@@ -10,7 +10,6 @@ export const Home = () => {
   const [contact, setContact] = useState([])
 
   const updateFavourite = async (id) => {
-    console.log('change favourite', id)
     try {
       await axios.patch(`http://localhost:8000/contacts/${id}`)
       document.location.reload()
@@ -43,8 +42,6 @@ export const Home = () => {
 
   // deleting the contact
   const deleteContact = async (id) => {
-    console.log(headerData)
-    console.log(id)
     try {
       await axios.delete(`http://localhost:8000/contacts/${id}`, {
         headers: headerData,
