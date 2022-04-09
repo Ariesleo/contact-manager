@@ -19,7 +19,8 @@ router.post('/contacts', auth, async (req, res) => {
 // creating GET/contacts endpoint to fetch all contacts
 router.get('/contacts', auth, async (req, res) => {
   try {
-    const contacts = await Contacts.find({})
+    // .sort() method helps to sort the data either in ascending 1 or descending order -1
+    const contacts = await Contacts.find({}).sort({ favourite: -1, name: 1 })
     res.send(contacts)
   } catch (e) {
     res.status(500).send(e)
