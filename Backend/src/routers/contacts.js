@@ -19,10 +19,23 @@ router.post('/contacts', auth, async (req, res) => {
 // creating GET/contacts endpoint to fetch all contacts
 router.get('/contacts', auth, async (req, res) => {
   try {
-    const contacts = await Contacts.find({})
+    // .sort() method helps to sort the data either in ascending 1 or descending order -1
+    const contacts = await Contacts.find({}).sort({ favourite: -1, name: 1 })
     res.send(contacts)
   } catch (e) {
     res.status(500).send(e)
+  }
+})
+
+router.patch('/contacts/:id', async (req, res) => {
+  const { id } = req.params
+  try {
+    const singleContact = await Contacts.findById(id)
+    singleContact.favourite = !singleContact.favourite
+    singleContact.save()
+    res.send(singleContact)
+  } catch (e) {
+    res.send(e)
   }
 })
 
@@ -30,7 +43,7 @@ router.get('/contacts', auth, async (req, res) => {
 router.put('/contacts/:id', auth, async (req, res) => {
   const id = req.params.id
   const updates = Object.keys(req.body)
-  const allowedUpdates = ['name', 'phone', 'address', 'email']
+  const allowedUpdates = ['name', 'phone', 'address', 'email', 'favourite']
   const isValidOperation = updates.every((update) =>
     allowedUpdates.includes(update)
   )
@@ -68,13 +81,12 @@ router.delete('/contacts/:id', auth, async (req, res) => {
 
 // setup endpoint for the image upload
 const upload = multer({
-  // dest: 'images',
-  // validating file size 1mb
   limits: {
     fileSize: 1000000,
   },
   // filter the extension we want to upload
   fileFilter(req, file, cb) {
+    console.log({ file })
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       return cb(new Error('please upload an image'))
     }
@@ -87,6 +99,7 @@ router.post(
   auth,
   upload.single('upload'),
   async (req, res) => {
+    console.log(req.file)
     const { id } = req.params
     // resizing and converting to the png format
     const buffer = await sharp(req.file.buffer)

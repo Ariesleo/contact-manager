@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 export const SignUp = () => {
+  const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -15,6 +16,7 @@ export const SignUp = () => {
     try {
       await axios.post(`http://localhost:8000/signup`, user)
       alert(`user with the email: ${email} has been created`)
+      navigate('/signin')
     } catch (e) {
       if (e.response.status === 400) {
         alert(`${email} has already been taken. Try another email address`)
