@@ -15,6 +15,7 @@ export const EditContact = () => {
   const [email, setEmail] = useState(location.state.email)
 
   const headerData = getToken()
+  console.log(headerData)
 
   useEffect(() => {
     if (!headerData.Authorization) {
@@ -42,6 +43,29 @@ export const EditContact = () => {
       navigate('/')
     } catch (e) {
       console.log({ e })
+    }
+  }
+
+  const uploadImage = async (e) => {
+    e.preventDefault()
+    const { id } = location.state
+
+    const files = document.getElementById('files')
+    console.log(files.files[0])
+
+    const formData = new FormData()
+    formData.append('upload', files.files[0])
+
+    try {
+      await axios.post(
+        `http://localhost:8000/contacts/${id}/upload`,
+        formData,
+        {
+          headers: headerData,
+        }
+      )
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -128,24 +152,41 @@ export const EditContact = () => {
           <input
             type="text"
             class="form-control"
-            id="address"
+            id="email"
             value={email}
             onChange={(e) => {
               setEmail(e.target.value)
             }}
           />
         </div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <button type="submit" class="btn btn-primary">
-            Submit
-          </button>
+        <div>
+          <form onSubmit={uploadImage} enctype="multipart/form-data">
+            <label for="files">Select fies</label>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <input
+                style={{ width: '60%' }}
+                id="files"
+                type="file"
+                class="form-control"
+                accept="image/*"
+              />
+              <button class="btn btn-secondary" type="submit">
+                Upload
+              </button>
+            </div>
+          </form>
         </div>
+        <br />
+        <br />
+        <button type="submit" class="btn btn-primary">
+          Submit
+        </button>
       </form>
     </div>
   )

@@ -81,13 +81,12 @@ router.delete('/contacts/:id', auth, async (req, res) => {
 
 // setup endpoint for the image upload
 const upload = multer({
-  // dest: 'images',
-  // validating file size 1mb
   limits: {
     fileSize: 1000000,
   },
   // filter the extension we want to upload
   fileFilter(req, file, cb) {
+    console.log({ file })
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
       return cb(new Error('please upload an image'))
     }
@@ -100,6 +99,7 @@ router.post(
   auth,
   upload.single('upload'),
   async (req, res) => {
+    console.log(req.file)
     const { id } = req.params
     // resizing and converting to the png format
     const buffer = await sharp(req.file.buffer)
