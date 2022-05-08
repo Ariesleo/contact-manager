@@ -2,11 +2,14 @@ import axios from 'axios'
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
+import Alert from '@mui/material/Alert'
+
 export const SignIn = () => {
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loginStatus, setLoginStatus] = useState(null)
 
   const singInUser = async (e) => {
     e.preventDefault()
@@ -21,11 +24,11 @@ export const SignIn = () => {
       )
       const { token } = loginUserData.data
       localStorage.setItem('token', token)
-      //   alert('signIn sucessfully')
+      setLoginStatus(true)
       navigate('/')
     } catch (e) {
       if (e.response.status === 401) {
-        alert('singIn failed')
+        setLoginStatus(false)
       }
       console.log(e)
     }
@@ -49,9 +52,14 @@ export const SignIn = () => {
 
   return (
     <div class="container" style={{ width: '40%' }}>
+      {loginStatus === false && (
+        <Alert severity="success">
+          This is a success alert — check it out!
+        </Alert>
+      )}
       <form onSubmit={singInUser}>
-        <h1 class="nav justify-content-center">SignIn</h1>
-        <div class="mb-3">
+        <h1 className="nav justify-content-center">SignIn</h1>
+        <div className="mb-3">
           <label for="exampleInputEmail1" class="form-label">
             Email address
           </label>
@@ -66,7 +74,7 @@ export const SignIn = () => {
             }}
           />
         </div>
-        <div class="mb-3">
+        <div className="mb-3">
           <label for="exampleInputPassword1" class="form-label">
             Password
           </label>
@@ -87,7 +95,7 @@ export const SignIn = () => {
             alignItems: 'center',
           }}
         >
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" className="btn btn-primary">
             Submit
           </button>
           <span>
