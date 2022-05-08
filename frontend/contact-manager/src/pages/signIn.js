@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 
 import axios from 'axios'
+import validator from 'validator'
 
 import LoadingButton from '@mui/lab/LoadingButton'
 import Box from '@mui/material/Box'
@@ -24,6 +25,22 @@ export const SignIn = () => {
   const [loading, setLoading] = useState(false)
   const [emptyField, setEmptyField] = useState(false)
   const [matchCred, setMatchCred] = useState(false)
+  const [emailError, setEmailError] = useState(false)
+
+  const focusField = () => {
+    setEmptyField(false)
+    setMatchCred(false)
+    setLoading(false)
+    setEmailError(false)
+  }
+
+  const outFocusField = () => {
+    if (validator.isEmail(email)) {
+      setEmailError(false)
+    } else {
+      setEmailError(true)
+    }
+  }
 
   const singInUser = async () => {
     const user = {
@@ -86,18 +103,33 @@ export const SignIn = () => {
             autoComplete="off"
           >
             {/* email */}
-            <TextField
-              id="standard-basic"
-              label="Email*"
-              variant="standard"
-              value={email}
-              onChange={(e) => {
-                setEmptyField(false)
-                setMatchCred(false)
-                setLoading(false)
-                setEmail(e.target.value)
-              }}
-            />
+            {!emailError ? (
+              <TextField
+                id="standard-basic"
+                label="Email*"
+                variant="standard"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                }}
+                onFocus={focusField}
+                onBlur={outFocusField}
+              />
+            ) : (
+              <TextField
+                error
+                id="standard-basic"
+                label="Email*"
+                variant="standard"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value)
+                }}
+                onFocus={focusField}
+                onBlur={outFocusField}
+                helperText="Invalid email"
+              />
+            )}
             {/* password */}
             <TextField
               id="standard-password-input"
@@ -106,11 +138,9 @@ export const SignIn = () => {
               variant="standard"
               value={password}
               onChange={(e) => {
-                setEmptyField(false)
-                setMatchCred(false)
-                setLoading(false)
                 setPassword(e.target.value)
               }}
+              onFocus={focusField}
             />
           </Box>
         </CardContent>
