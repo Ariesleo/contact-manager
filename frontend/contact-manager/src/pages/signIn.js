@@ -31,7 +31,6 @@ export const SignIn = () => {
     setEmptyField(false)
     setMatchCred(false)
     setLoading(false)
-    setEmailError(false)
   }
 
   const outFocusField = () => {
@@ -124,6 +123,7 @@ export const SignIn = () => {
                 value={email}
                 onChange={(e) => {
                   setEmail(e.target.value)
+                  setEmailError(false)
                 }}
                 onFocus={focusField}
                 onBlur={outFocusField}
