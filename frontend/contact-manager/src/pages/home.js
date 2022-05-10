@@ -10,7 +10,7 @@ export const Home = () => {
 
   const [contact, setContact] = useState([])
   const [openModal, setOpenModal] = useState(false)
-  const [newContact, setNewContact] = useState(true)
+  const [newContact, setNewContact] = useState(false)
 
   // updating the favourite data
   const updateFavourite = async (id) => {
