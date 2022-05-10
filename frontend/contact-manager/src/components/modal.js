@@ -35,6 +35,7 @@ const AddEditContactModal = ({
     !newContact ? sendEditData.address : ''
   )
   const [email, setEmail] = useState(!newContact ? sendEditData.email : '')
+  const [editId, setEditId] = useState(sendEditData.id)
 
   const [emailError, setEmailError] = useState(false)
   const [emptyField, setEmptyField] = useState(false)
@@ -87,8 +88,31 @@ const AddEditContactModal = ({
   }
 
   // edit contact data
-  const editContact = () => {
+  const editContact = async () => {
     console.log('edit contact')
+    if (!name || !mobile || !email) {
+      setEmptyField(true)
+    } else {
+      const contact = {
+        name,
+        phone: {
+          work,
+          home,
+          mobile,
+        },
+        address,
+        email,
+      }
+      try {
+        const id = editId
+        await axios.put(`http://localhost:8000/contacts/${id}`, contact, {
+          headers: headerData,
+        })
+        // navigate('/')
+      } catch (e) {
+        console.log({ e })
+      }
+    }
   }
 
   return (
