@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 
 import validator from 'validator'
+import { getToken } from '../utils/getToken'
+import axios from 'axios'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -31,10 +33,15 @@ const AddEditContactModal = ({
   const [emailError, setEmailError] = useState(false)
   const [emptyField, setEmptyField] = useState(false)
 
+  // get token here
+  const headerData = getToken()
+  console.log(headerData)
+
   // belwo to close the modal
   const handleClose = () => {
     setOpenModal(false)
     setNewContact(false)
+    document.location.reload()
   }
 
   const focusField = () => {
@@ -50,25 +57,35 @@ const AddEditContactModal = ({
   }
 
   // add new contact
-  const addNewContactData = () => {
+  const addNewContact = async () => {
     console.log('addNewcontact')
     if (!name || !mobile || !email) {
       setEmptyField(true)
     } else {
-      const addnewdata = {
+      const addnewcontactdata = {
         name,
-        work,
-        home,
-        mobile,
+        phone: {
+          work,
+          home,
+          mobile,
+        },
         address,
         email,
       }
-      console.log(addnewdata)
+      console.log(addnewcontactdata)
+      try {
+        await axios.post(`http://localhost:8000/contacts`, addnewcontactdata, {
+          headers: headerData,
+        })
+        // navigate('/')
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 
   // edit contact data
-  const editContactData = () => {
+  const editContact = () => {
     console.log('edit contact')
   }
 
@@ -237,7 +254,7 @@ const AddEditContactModal = ({
               <Button
                 variant="contained"
                 endIcon={<BackupRoundedIcon />}
-                onClick={newContact ? addNewContactData : editContactData}
+                onClick={newContact ? addNewContact : editContact}
               >
                 SUBMIT
               </Button>
