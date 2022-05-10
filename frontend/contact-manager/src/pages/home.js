@@ -11,6 +11,7 @@ export const Home = () => {
   const [contact, setContact] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [newContact, setNewContact] = useState(false)
+  const [sendEditData, setSendEditData] = useState({})
 
   // updating the favourite data
   const updateFavourite = async (id) => {
@@ -63,8 +64,8 @@ export const Home = () => {
       address,
       email,
     }
-    // setNewContact(false)
     console.log(editData)
+    setSendEditData(editData)
     // navigate('/editcontact', {
     //   state: {
     //     id,
@@ -178,6 +179,7 @@ export const Home = () => {
             setOpenModal={setOpenModal}
             newContact={newContact}
             setNewContact={setNewContact}
+            sendEditData={sendEditData}
           />
         )}
       </div>

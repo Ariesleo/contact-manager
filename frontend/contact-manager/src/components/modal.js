@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import validator from 'validator'
 import { getToken } from '../utils/getToken'
@@ -23,25 +23,29 @@ const AddEditContactModal = ({
   setOpenModal,
   newContact,
   setNewContact,
+  sendEditData,
 }) => {
-  const [name, setName] = useState('')
-  const [work, setWork] = useState('')
-  const [home, setHome] = useState('')
-  const [mobile, setMobile] = useState('')
-  const [address, setAddress] = useState('')
-  const [email, setEmail] = useState('')
+  const [name, setName] = useState(!newContact ? sendEditData.name : '')
+  const [work, setWork] = useState(!newContact ? sendEditData.phone.work : '')
+  const [home, setHome] = useState(!newContact ? sendEditData.phone.home : '')
+  const [mobile, setMobile] = useState(
+    !newContact ? sendEditData.phone.mobile : ''
+  )
+  const [address, setAddress] = useState(
+    !newContact ? sendEditData.address : ''
+  )
+  const [email, setEmail] = useState(!newContact ? sendEditData.email : '')
+
   const [emailError, setEmailError] = useState(false)
   const [emptyField, setEmptyField] = useState(false)
 
   // get token here
   const headerData = getToken()
-  console.log(headerData)
 
   // belwo to close the modal
   const handleClose = () => {
     setOpenModal(false)
     setNewContact(false)
-    document.location.reload()
   }
 
   const focusField = () => {
@@ -58,7 +62,6 @@ const AddEditContactModal = ({
 
   // add new contact
   const addNewContact = async () => {
-    console.log('addNewcontact')
     if (!name || !mobile || !email) {
       setEmptyField(true)
     } else {
@@ -72,7 +75,6 @@ const AddEditContactModal = ({
         address,
         email,
       }
-      console.log(addnewcontactdata)
       try {
         await axios.post(`http://localhost:8000/contacts`, addnewcontactdata, {
           headers: headerData,
