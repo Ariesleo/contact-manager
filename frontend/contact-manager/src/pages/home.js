@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/getToken'
+import AddEditContactModal from '../components/modal'
 
 export const Home = () => {
   const navigate = useNavigate()
   const headerData = getToken()
 
   const [contact, setContact] = useState([])
+  const [openModal, setOpenModal] = useState(false)
+  const [newContact, setNewContact] = useState(true)
 
   // updating the favourite data
   const updateFavourite = async (id) => {
@@ -52,15 +55,25 @@ export const Home = () => {
   }
   // send the relevent data for editing
   const editContact = (id, name, phone, address, email) => {
-    navigate('/editcontact', {
-      state: {
-        id,
-        name,
-        phone,
-        address,
-        email,
-      },
-    })
+    setOpenModal(true)
+    const editData = {
+      id,
+      name,
+      phone,
+      address,
+      email,
+    }
+    // setNewContact(false)
+    console.log(editData)
+    // navigate('/editcontact', {
+    //   state: {
+    //     id,
+    //     name,
+    //     phone,
+    //     address,
+    //     email,
+    //   },
+    // })
   }
   return (
     <>
@@ -70,7 +83,8 @@ export const Home = () => {
           class="btn btn-outline-primary"
           style={{ float: 'right' }}
           onClick={() => {
-            navigate('/newcontact')
+            setOpenModal(true)
+            setNewContact(true)
           }}
         >
           Add New Contact
@@ -158,6 +172,14 @@ export const Home = () => {
             })}
           </tbody>
         </table>
+        {openModal && (
+          <AddEditContactModal
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            newContact={newContact}
+            setNewContact={setNewContact}
+          />
+        )}
       </div>
     </>
   )
