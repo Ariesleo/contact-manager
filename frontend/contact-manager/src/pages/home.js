@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/getToken'
-import AddEditContactModal from '../components/modal'
+import AddEditContactModal from '../components/addEditContact'
 
 export const Home = () => {
   const navigate = useNavigate()
