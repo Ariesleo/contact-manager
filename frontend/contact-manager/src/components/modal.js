@@ -39,6 +39,8 @@ const AddEditContactModal = ({
 
   const [emailError, setEmailError] = useState(false)
   const [emptyField, setEmptyField] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
 
   // get token here
   const headerData = getToken()
@@ -51,6 +53,7 @@ const AddEditContactModal = ({
 
   const focusField = () => {
     setEmptyField(false)
+    setSubmitSuccess(false)
   }
 
   const outFocusField = () => {
@@ -77,9 +80,16 @@ const AddEditContactModal = ({
         email,
       }
       try {
-        await axios.post(`http://localhost:8000/contacts`, addnewcontactdata, {
-          headers: headerData,
-        })
+        const addNewContact = await axios.post(
+          `http://localhost:8000/contacts`,
+          addnewcontactdata,
+          {
+            headers: headerData,
+          }
+        )
+        if (addNewContact.status === 200) {
+          setSubmitSuccess(true)
+        }
         // navigate('/')
       } catch (e) {
         console.log(e)
@@ -89,7 +99,6 @@ const AddEditContactModal = ({
 
   // edit contact data
   const editContact = async () => {
-    console.log('edit contact')
     if (!name || !mobile || !email) {
       setEmptyField(true)
     } else {
@@ -105,13 +114,48 @@ const AddEditContactModal = ({
       }
       try {
         const id = editId
-        await axios.put(`http://localhost:8000/contacts/${id}`, contact, {
-          headers: headerData,
-        })
+        const editContact = await axios.put(
+          `http://localhost:8000/contacts/${id}`,
+          contact,
+          {
+            headers: headerData,
+          }
+        )
+        if (editContact.status === 201) {
+          setSubmitSuccess(true)
+        }
         // navigate('/')
       } catch (e) {
         console.log({ e })
       }
+    }
+  }
+
+  // uploading the Image
+  const uploadImage = async (e) => {
+    e.preventDefault()
+    const id = editId
+
+    const files = document.getElementById('files')
+    console.log(files.files[0])
+
+    const formData = new FormData()
+    formData.append('upload', files.files[0])
+
+    try {
+      const imageData = await axios.post(
+        `http://localhost:8000/contacts/${id}/upload`,
+        formData,
+        {
+          headers: headerData,
+        }
+      )
+      if (imageData.status === 200) {
+        setSuccess(true)
+      }
+      console.log(imageData)
+    } catch (e) {
+      console.log(e)
     }
   }
 
@@ -131,6 +175,12 @@ const AddEditContactModal = ({
 
           {emptyField && (
             <Alert severity="error">Required fields can't be empty</Alert>
+          )}
+
+          {submitSuccess && (
+            <Alert severity="success">
+              Succesfully {!newContact ? 'edited' : 'added'} contact
+            </Alert>
           )}
 
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
@@ -259,20 +309,25 @@ const AddEditContactModal = ({
               </Box>
             </div>
 
-            {/* upload file */}
+            {/* upload Image */}
             {!newContact && (
               <Box sx={{ mt: 3 }}>
-                <label htmlFor="contained-button-file">
-                  <input
-                    accept="image/*"
-                    id="contained-button-file"
-                    multiple
-                    type="file"
-                  />
-                  <Button variant="outlined" component="span">
-                    Upload
-                  </Button>
-                </label>
+                {!success ? (
+                  <label htmlFor="contained-button-file">
+                    <input accept="image/*" id="files" type="file" />
+                    <Button
+                      variant="outlined"
+                      component="span"
+                      onClick={uploadImage}
+                    >
+                      Upload
+                    </Button>
+                  </label>
+                ) : (
+                  <Alert severity="success">
+                    Image has been sucessfully uploaded
+                  </Alert>
+                )}
               </Box>
             )}
             {/* submit form */}
