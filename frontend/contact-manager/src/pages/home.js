@@ -1,8 +1,29 @@
+import React from 'react'
+
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { getToken } from '../utils/getToken'
 import AddEditContactModal from '../components/addEditContact'
+
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Card from '@mui/material/Card'
+import CardActions from '@mui/material/CardActions'
+import CardContent from '@mui/material/CardContent'
+import Typography from '@mui/material/Typography'
+import Avatar from '@mui/material/Avatar'
+import { deepOrange } from '@mui/material/colors'
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
+import WorkRoundedIcon from '@mui/icons-material/WorkRounded'
+import PhoneIphoneRoundedIcon from '@mui/icons-material/PhoneIphoneRounded'
+import MapRoundedIcon from '@mui/icons-material/MapRounded'
+import IconButton from '@mui/material/IconButton'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
+import FavoriteIcon from '@mui/icons-material/Favorite'
+import AddIcCallIcon from '@mui/icons-material/AddIcCall'
 
 export const Home = () => {
   const navigate = useNavigate()
@@ -66,75 +87,144 @@ export const Home = () => {
     }
     console.log(editData)
     setSendEditData(editData)
-    // navigate('/editcontact', {
-    //   state: {
-    //     id,
-    //     name,
-    //     phone,
-    //     address,
-    //     email,
-    //   },
-    // })
   }
   return (
     <>
       <div class="container" style={{ marginTop: '1.5%' }}>
-        <button
-          type="button"
-          class="btn btn-outline-primary"
-          style={{ float: 'right' }}
-          onClick={() => {
-            setOpenModal(true)
-            setNewContact(true)
-          }}
+        <Box>
+          <Card
+            elevation={2}
+            sx={{
+              padding: '1.5%',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Typography variant="h5" component="div">
+              Contact List
+            </Typography>
+            <Button
+              variant="outlined"
+              startIcon={<AddIcCallIcon />}
+              onClick={() => {
+                setOpenModal(true)
+                setNewContact(true)
+              }}
+            >
+              Add New Contact
+            </Button>
+          </Card>
+        </Box>
+        {/* card for each contact */}
+        <Box
+          sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center' }}
         >
-          Add New Contact
-        </button>
-        <br />
-        <br />
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-
-              <th scope="col">Image</th>
-              <th scope="col">Name</th>
-              <th scope="col">Phone</th>
-              <th scope="col">Address</th>
-              <th scope="col">Email</th>
-              <th scope="col">Actions</th>
-              <th scope="col">Favourite</th>
-            </tr>
-          </thead>
-          <tbody>
-            {contact.map((data, key) => {
-              return (
-                <tr key={key}>
-                  <th scope="row">{key + 1}</th>
-
-                  <td>
-                    <img
-                      style={{ borderRadius: '50%', height: '70px' }}
-                      alt=""
-                      src={`http://localhost:8000/contacts/${data._id}/image`}
-                    />
-                  </td>
-                  <td>{data.name}</td>
-                  <td>
-                    <b>Home:</b> {data.phone.home}
-                    <br />
-                    <b>Work:</b> {data.phone.work}
-                    <br />
-                    <b>Mobile:</b> {data.phone.mobile}
-                  </td>
-                  <td>{data.address}</td>
-                  <td>{data.email}</td>
-                  <td
-                    style={{ display: 'flex', justifyContent: 'space-between' }}
+          {contact.map((data, key) => {
+            return (
+              <Card
+                key={key}
+                elevation={24}
+                sx={{
+                  maxWidth: 300,
+                  marginLeft: '20px',
+                  paddingX: '4.5%',
+                  paddingY: '2%',
+                  marginY: '2%',
+                }}
+              >
+                <CardContent>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
                   >
-                    <button
-                      type="button"
-                      class="btn btn-primary"
+                    {data.image !== '' ? (
+                      <Avatar
+                        alt="Contact Image"
+                        src={`http://localhost:8000/contacts/${data._id}/image`}
+                        sx={{ width: 56, height: 56 }}
+                      />
+                    ) : (
+                      <Avatar
+                        sx={{ bgcolor: deepOrange[500], width: 56, height: 56 }}
+                      >
+                        {data.name.slice(0, 2).toUpperCase()}
+                      </Avatar>
+                    )}
+                    <Typography variant="h6" component="div">
+                      {data.name}
+                    </Typography>
+                    <Typography
+                      sx={{ fontSize: 14 }}
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      {data.email}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="h6" component="div">
+                      Phone Number
+                    </Typography>
+                    {/* home */}
+                    <Box sx={{ display: 'flex' }}>
+                      <HomeRoundedIcon sx={{ color: 'action.active', mr: 1 }} />
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        {data.phone.home ? data.phone.home : 'N/A'}
+                      </Typography>
+                    </Box>
+                    {/* work */}
+                    <Box sx={{ display: 'flex' }}>
+                      <WorkRoundedIcon sx={{ color: 'action.active', mr: 1 }} />
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        {data.phone.work ? data.phone.work : 'N/A'}
+                      </Typography>
+                    </Box>
+                    {/* mobile */}
+                    <Box sx={{ display: 'flex' }}>
+                      <PhoneIphoneRoundedIcon
+                        sx={{ color: 'action.active', mr: 1 }}
+                      />
+                      <Typography sx={{ mb: 1.5 }} color="text.secondary">
+                        {data.phone.mobile}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box>
+                    {/* address */}
+                    <Typography variant="h6" component="div">
+                      Address
+                    </Typography>
+                    <Box sx={{ mb: 1.5, display: 'flex' }}>
+                      <MapRoundedIcon sx={{ color: 'action.active', mr: 1 }} />
+                      <Typography
+                        sx={{ fontSize: '14px' }}
+                        color="text.secondary"
+                      >
+                        {data.address}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+                <CardActions
+                  sx={{
+                    marginTop: '-7%',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Box>
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => deleteContact(data._id)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                    <IconButton
+                      aria-label="edit"
                       onClick={() =>
                         editContact(
                           data._id,
@@ -145,34 +235,30 @@ export const Home = () => {
                         )
                       }
                     >
-                      edit
-                    </button>{' '}
-                    <button
-                      button
-                      type="button"
-                      class="btn btn-danger"
-                      onClick={() => deleteContact(data._id)}
-                    >
-                      delelte
-                    </button>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
-                      <input
-                        type="checkbox"
-                        checked={data.favourite}
-                        onChange={(e) => {
-                          e.preventDefault()
-                          updateFavourite(data._id)
-                        }}
-                      />
-                    </div>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+                      <EditIcon />
+                    </IconButton>
+                  </Box>
+                  <Box
+                    onClick={() => {
+                      updateFavourite(data._id)
+                    }}
+                  >
+                    {data.favourite ? (
+                      <IconButton aria-label="favClick">
+                        <FavoriteIcon />
+                      </IconButton>
+                    ) : (
+                      <IconButton aria-label="fav">
+                        <FavoriteBorderIcon />
+                      </IconButton>
+                    )}
+                  </Box>
+                </CardActions>
+              </Card>
+            )
+          })}
+        </Box>
+        {/* below add-edit modal */}
         {openModal && (
           <AddEditContactModal
             openModal={openModal}
