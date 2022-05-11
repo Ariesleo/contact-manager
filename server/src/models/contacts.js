@@ -58,7 +58,6 @@ contactSchema.methods.toJSON = function () {
   const contact = this
   const contactObject = contact.toObject()
 
-  delete contactObject.image
   return contactObject
 }
 
