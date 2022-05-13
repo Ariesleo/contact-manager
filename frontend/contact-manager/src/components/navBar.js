@@ -1,6 +1,9 @@
 import * as React from 'react'
 import { Link } from 'react-router-dom'
 
+// import axios from 'axios'
+// import { getToken } from '../utils/getToken'
+
 import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
 import { useTheme, ThemeProvider, createTheme } from '@mui/material/styles'
@@ -9,11 +12,19 @@ import Brightness7Icon from '@mui/icons-material/Brightness7'
 import CssBaseline from '@mui/material/CssBaseline'
 import Button from '@mui/material/Button'
 import LogoutIcon from '@mui/icons-material/Logout'
+
 const ColorModeContext = React.createContext({ toggleColorMode: () => {} })
 
 function MyApp() {
   const theme = useTheme()
   const colorMode = React.useContext(ColorModeContext)
+
+  // let headerData = getToken()
+
+  const logOut = async () => {
+    window.localStorage.removeItem('token')
+    window.location.reload()
+  }
 
   return (
     <Box
@@ -46,13 +57,14 @@ function MyApp() {
             <Brightness4Icon />
           )}
         </IconButton>
-        <Button variant="contained" endIcon={<LogoutIcon />}>
-          <Link
+        <Button variant="contained" endIcon={<LogoutIcon />} onClick={logOut}>
+          {/* <Link
             to="/signin"
             style={{ color: 'inherit', textDecoration: 'none' }}
           >
             Logout
-          </Link>
+          </Link> */}
+          LogOut
         </Button>
       </div>
     </Box>
