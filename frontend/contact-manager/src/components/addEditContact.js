@@ -297,7 +297,7 @@ const AddEditContactModal = ({
               <Box sx={{ mt: 3 }}>
                 {!success ? (
                   <label htmlFor="contained-button-file">
-                    <input accept="image/*" id="files" type="file" />
+                    <input accept="image/jpeg" id="files" type="file" />
                     <Button
                       variant="outlined"
                       component="span"
