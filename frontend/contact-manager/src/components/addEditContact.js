@@ -17,6 +17,7 @@ import MailRoundedIcon from '@mui/icons-material/MailRounded'
 import MapRoundedIcon from '@mui/icons-material/MapRounded'
 import BackupRoundedIcon from '@mui/icons-material/BackupRounded'
 import Alert from '@mui/material/Alert'
+import { addNewContact, editContact } from '../services/api.services'
 
 const AddEditContactModal = ({
   openModal,
@@ -35,7 +36,7 @@ const AddEditContactModal = ({
     !newContact ? sendEditData.address : ''
   )
   const [email, setEmail] = useState(!newContact ? sendEditData.email : '')
-  const [editId, setEditId] = useState(sendEditData.id)
+  const editId = sendEditData.id
 
   const [emailError, setEmailError] = useState(false)
   const [emptyField, setEmptyField] = useState(false)
@@ -65,7 +66,7 @@ const AddEditContactModal = ({
   }
 
   // add new contact
-  const addNewContact = async () => {
+  const addNewContactOnClick = () => {
     if (!name || !mobile || !email) {
       setEmptyField(true)
     } else {
@@ -79,26 +80,21 @@ const AddEditContactModal = ({
         address,
         email,
       }
-      try {
-        const addNewContact = await axios.post(
-          `http://localhost:8000/contacts`,
-          addnewcontactdata,
-          {
-            headers: headerData,
+      addNewContact(addnewcontactdata)
+        .then((data) => {
+          if (data.request.status === 201) {
+            setSubmitSuccess(true)
+            setOpenModal(false)
           }
-        )
-        if (addNewContact.status === 200) {
-          setSubmitSuccess(true)
-        }
-        // navigate('/')
-      } catch (e) {
-        console.log(e)
-      }
+        })
+        .catch((e) => {
+          console.log(e)
+        })
     }
   }
 
   // edit contact data
-  const editContact = async () => {
+  const editContactOnClick = async () => {
     if (!name || !mobile || !email) {
       setEmptyField(true)
     } else {
@@ -112,22 +108,16 @@ const AddEditContactModal = ({
         address,
         email,
       }
-      try {
-        const id = editId
-        const editContact = await axios.put(
-          `http://localhost:8000/contacts/${id}`,
-          contact,
-          {
-            headers: headerData,
+      const id = editId
+      editContact(id, contact)
+        .then((data) => {
+          if (data.request.status === 201) {
+            setSubmitSuccess(true)
           }
-        )
-        if (editContact.status === 201) {
-          setSubmitSuccess(true)
-        }
-        // navigate('/')
-      } catch (e) {
-        console.log({ e })
-      }
+        })
+        .catch((e) => {
+          console.log(e)
+        })
     }
   }
 
@@ -137,7 +127,6 @@ const AddEditContactModal = ({
     const id = editId
 
     const files = document.getElementById('files')
-    console.log(files.files[0])
 
     const formData = new FormData()
     formData.append('upload', files.files[0])
@@ -153,7 +142,6 @@ const AddEditContactModal = ({
       if (imageData.status === 200) {
         setSuccess(true)
       }
-      console.log(imageData)
     } catch (e) {
       console.log(e)
     }
@@ -335,7 +323,7 @@ const AddEditContactModal = ({
               <Button
                 variant="contained"
                 endIcon={<BackupRoundedIcon />}
-                onClick={newContact ? addNewContact : editContact}
+                onClick={newContact ? addNewContactOnClick : editContactOnClick}
               >
                 SUBMIT
               </Button>
