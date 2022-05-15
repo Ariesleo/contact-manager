@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 
 import validator from 'validator'
-import { getToken } from '../utils/getToken'
-import axios from 'axios'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -17,7 +15,11 @@ import MailRoundedIcon from '@mui/icons-material/MailRounded'
 import MapRoundedIcon from '@mui/icons-material/MapRounded'
 import BackupRoundedIcon from '@mui/icons-material/BackupRounded'
 import Alert from '@mui/material/Alert'
-import { addNewContact, editContact } from '../services/api.services'
+import {
+  addNewContact,
+  editContact,
+  uploadAvatar,
+} from '../services/api.services'
 
 const AddEditContactModal = ({
   openModal,
@@ -42,9 +44,6 @@ const AddEditContactModal = ({
   const [emptyField, setEmptyField] = useState(false)
   const [success, setSuccess] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
-
-  // get token here
-  const headerData = getToken()
 
   // belwo to close the modal
   const handleClose = () => {
@@ -94,7 +93,7 @@ const AddEditContactModal = ({
   }
 
   // edit contact data
-  const editContactOnClick = async () => {
+  const editContactOnClick = () => {
     if (!name || !mobile || !email) {
       setEmptyField(true)
     } else {
@@ -131,20 +130,16 @@ const AddEditContactModal = ({
     const formData = new FormData()
     formData.append('upload', files.files[0])
 
-    try {
-      const imageData = await axios.post(
-        `http://localhost:8000/contacts/${id}/upload`,
-        formData,
-        {
-          headers: headerData,
+    uploadAvatar(id, formData)
+      .then((data) => {
+        console.log(data)
+        if (data.request.status === 200) {
+          setSuccess(true)
         }
-      )
-      if (imageData.status === 200) {
-        setSuccess(true)
-      }
-    } catch (e) {
-      console.log(e)
-    }
+      })
+      .catch((e) => {
+        console.log(e)
+      })
   }
 
   return (
