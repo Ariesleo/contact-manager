@@ -24,6 +24,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import AddIcCallIcon from '@mui/icons-material/AddIcCall'
+import { updateFavourite } from '../services/api.services'
 
 export const Home = () => {
   const navigate = useNavigate()
@@ -35,9 +36,9 @@ export const Home = () => {
   const [sendEditData, setSendEditData] = useState({})
 
   // updating the favourite data
-  const updateFavourite = async (id) => {
+  const updateFavouriteOnClick = (id) => {
     try {
-      await axios.patch(`http://localhost:8000/contacts/${id}`)
+      updateFavourite(id)
       document.location.reload()
     } catch (e) {
       console.log(e)
@@ -90,7 +91,7 @@ export const Home = () => {
   }
   return (
     <>
-      <div class="container" style={{ marginTop: '1.5%' }}>
+      <div className="container" style={{ marginTop: '1.5%' }}>
         <Box>
           <Card
             elevation={2}
@@ -240,7 +241,7 @@ export const Home = () => {
                   </Box>
                   <Box
                     onClick={() => {
-                      updateFavourite(data._id)
+                      updateFavouriteOnClick(data._id)
                     }}
                   >
                     {data.favourite ? (
