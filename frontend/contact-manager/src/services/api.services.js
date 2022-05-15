@@ -30,3 +30,9 @@ export const editContact = async (id, data) => {
     headers: headerData,
   })
 }
+
+export const uploadAvatar = async (id, data) => {
+  return await axios.post(`${baseURL}/contacts/${id}/upload`, data, {
+    headers: headerData,
+  })
+}
