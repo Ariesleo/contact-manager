@@ -1,10 +1,14 @@
 import React from 'react'
 
 import { useEffect, useState } from 'react'
-import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { getToken } from '../utils/getToken'
 import AddEditContactModal from '../components/addEditContact'
+
+import {
+  deleteContact,
+  getAllContacts,
+  updateFavourite,
+} from '../services/api.services'
 
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -24,17 +28,16 @@ import EditIcon from '@mui/icons-material/Edit'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder'
 import FavoriteIcon from '@mui/icons-material/Favorite'
 import AddIcCallIcon from '@mui/icons-material/AddIcCall'
-import { updateFavourite } from '../services/api.services'
 
 export const Home = () => {
   const navigate = useNavigate()
-  const headerData = getToken()
 
   const [contact, setContact] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [newContact, setNewContact] = useState(false)
   const [sendEditData, setSendEditData] = useState({})
 
+  // console.log(getAllContacts())
   // updating the favourite data
   const updateFavouriteOnClick = (id) => {
     try {
@@ -46,30 +49,28 @@ export const Home = () => {
   }
 
   // fetching all contacts
-  const getData = async () => {
-    try {
-      const contactsData = await axios.get(`http://localhost:8000/contacts`, {
-        headers: headerData,
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const getData = () => {
+    getAllContacts()
+      .then((data) => {
+        setContact(data.data)
       })
-      setContact(contactsData.data)
-    } catch (e) {
-      if (e.response.status === 401) {
-        navigate('/signIn')
-      }
-      console.log(e)
-    }
+      .catch((e) => {
+        if (e.response.status === 401) {
+          navigate('/signIn')
+        }
+        console.log(e)
+      })
   }
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [contact, getData])
 
   // deleting the contact
-  const deleteContact = async (id) => {
+  const deleteContactOnClick = (id) => {
     try {
-      await axios.delete(`http://localhost:8000/contacts/${id}`, {
-        headers: headerData,
-      })
+      deleteContact(id)
       alert('contct deleted')
       document.location.reload(true)
     } catch (e) {
@@ -86,7 +87,6 @@ export const Home = () => {
       address,
       email,
     }
-    console.log(editData)
     setSendEditData(editData)
   }
   return (
@@ -220,7 +220,7 @@ export const Home = () => {
                   <Box>
                     <IconButton
                       aria-label="delete"
-                      onClick={() => deleteContact(data._id)}
+                      onClick={() => deleteContactOnClick(data._id)}
                     >
                       <DeleteIcon />
                     </IconButton>
