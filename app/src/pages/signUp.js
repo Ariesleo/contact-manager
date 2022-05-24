@@ -50,7 +50,7 @@ export const SignUp = () => {
     } else {
       try {
         const signUpData = await axios.post(
-          `http://localhost:8000/signup`,
+          `https://contact-manager-back.herokuapp.com/signup`,
           user
         )
         if (signUpData.status === 201) {

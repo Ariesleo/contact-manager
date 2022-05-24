@@ -146,7 +146,7 @@ export const Home = () => {
                     {data.image !== '' ? (
                       <Avatar
                         alt="Contact Image"
-                        src={`http://localhost:8000/contacts/${data._id}/image`}
+                        src={`https://contact-manager-back.herokuapp.com/contacts/${data._id}/image`}
                         sx={{ width: 56, height: 56 }}
                       />
                     ) : (
